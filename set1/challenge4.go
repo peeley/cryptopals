@@ -15,7 +15,7 @@ func FindDecrypted(filename string) string {
 	var bestCandidate string
 	var bestScore float32 = -1.0
 	for _, line := range strings.Split(lines, "\n") {
-		decrypted := DecryptXOR(line)
+		decrypted, _ := DecryptXOR(line)
 		score := FrequencyScore([]byte(decrypted))
 		if score > bestScore {
 			bestScore = score

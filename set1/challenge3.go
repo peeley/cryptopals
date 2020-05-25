@@ -9,9 +9,10 @@ var English_Frequencies = map[byte]float32{
 	'u': 0.0225134, 'v': 0.0082903, 'w': 0.0171272, 'x': 0.0013692,
 	'y': 0.0145984, 'z': 0.0007836, ' ': 0.1918182}
 
-func DecryptXOR(input string) string {
+func DecryptXOR(input string) (string, byte) {
 	rawBytes := HexStringToBytes(input)
 	var cipherChar byte
+	var bestCipherChar byte
 	var highestScore float32 = -1.0
 	var bestCandidate []byte
 	for cipherChar = 0; cipherChar < 255; cipherChar++ {
@@ -23,9 +24,10 @@ func DecryptXOR(input string) string {
 		if cipherScore > highestScore {
 			highestScore = cipherScore
 			bestCandidate = decoded
+			bestCipherChar = cipherChar
 		}
 	}
-	return string(bestCandidate)
+	return string(bestCandidate), bestCipherChar
 }
 
 func FrequencyScore(candidate []byte) float32 {
