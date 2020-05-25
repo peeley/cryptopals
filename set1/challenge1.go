@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-func Challenge1(input string) string {
+func HexStringToBase64(input string) string {
 	rawBytes := make([]byte, hex.DecodedLen(len(input)))
 	_, err := hex.Decode(rawBytes, []byte(input))
 	if err != nil {

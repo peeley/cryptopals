@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func Challenge2(input1 string, input2 string) string {
+func XORStrings(input1 string, input2 string) string {
 	rawBytes1 := HexStringToBytes(input1)
 	rawBytes2 := HexStringToBytes(input2)
 	xorBytes := make([]byte, len(rawBytes2))
@@ -19,7 +19,7 @@ func HexStringToBytes(input string) []byte {
 	rawBytes := make([]byte, hex.DecodedLen(len(input)))
 	_, err := hex.Decode(rawBytes, []byte(input))
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("Error decoding hex string to bytes:", err)
 	}
 	return rawBytes
 }
