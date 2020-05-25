@@ -29,8 +29,9 @@ func DecryptRotatingXOR(filename string) string {
 		_, cipherChar := DecryptXOR(BytesToHexString(block))
 		cipher = append(cipher, cipherChar)
 	}
-	fmt.Println("found key:", cipher)
-	return EncryptRotatingXOR(string(inputBytes), string(cipher))
+	fmt.Printf("found key: %v \n", string(cipher))
+	fmt.Println("----------------")
+	return string(HexStringToBytes(EncryptRotatingXOR(string(inputBytes), string(cipher))))
 }
 
 func HammingDistance(input1 []byte, input2 []byte) float64 {
@@ -53,8 +54,8 @@ func findKeySize(inputBytes []byte) int {
 	var smallestDistance float64 = math.Inf(1)
 	var bestKeySize int
 	for keySize := keySizeLowerBound; keySize < keySizeUpperBound; keySize++ {
-		firstChunk := inputBytes[:keySize]
-		secondChunk := inputBytes[keySize : keySize*2]
+		firstChunk := inputBytes[:keySize*3]
+		secondChunk := inputBytes[keySize*3 : keySize*9]
 		distance = HammingDistance(firstChunk, secondChunk) / float64(keySize)
 		if distance < smallestDistance {
 			smallestDistance = distance
