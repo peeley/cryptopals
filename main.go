@@ -2,12 +2,14 @@ package main
 
 import (
 	"cryptopals/set1"
+	"encoding/base64"
 	"fmt"
+	"io/ioutil"
 )
 
 func main() {
-	base64 := set1.HexStringToBase64("49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d")
-	fmt.Println("solution to challenge 1:", base64, "\n")
+	decodedBase64 := set1.HexStringToBase64("49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d")
+	fmt.Println("solution to challenge 1:", decodedBase64, "\n")
 
 	chal2input1 := "1c0111001f010100061a024b53535009181c"
 	chal2input2 := "686974207468652062756c6c277320657965"
@@ -21,5 +23,12 @@ func main() {
 	poetry := "Burning 'em, if you ain't quick and nimble"
 	fmt.Println("solution to challenge 5:", set1.EncryptRotatingXOR(poetry, "ICE"), "\n")
 
-	fmt.Println("solution to challenge 6:", set1.DecryptRotatingXOR("6.txt"))
+	fmt.Println("solution to challenge 6: \n", set1.DecryptRotatingXOR("6.txt"))
+	fmt.Println()
+
+	challenge7, _ := ioutil.ReadFile("7.txt")
+	challenge7, _ = base64.StdEncoding.DecodeString(string(challenge7))
+	challenge7 = []byte(challenge7)
+	key7 := []byte("YELLOW SUBMARINE")
+	fmt.Println("solution to challenge 7:\n", set1.DecryptAES(challenge7, key7))
 }
