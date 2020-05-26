@@ -31,4 +31,7 @@ func main() {
 	challenge7 = []byte(challenge7)
 	key7 := []byte("YELLOW SUBMARINE")
 	fmt.Println("solution to challenge 7:\n", set1.DecryptAES(challenge7, key7))
+
+	contents, _ := ioutil.ReadFile("8.txt")
+	fmt.Println("solution to challenge 8:\n", set1.DetectAES(string(contents)))
 }
