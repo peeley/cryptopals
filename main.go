@@ -14,7 +14,7 @@ func main() {
 
 	chal2input1 := "1c0111001f010100061a024b53535009181c"
 	chal2input2 := "686974207468652062756c6c277320657965"
-	fmt.Println("solution to challenge 2:", set1.XORStrings(chal2input1, chal2input2), "\n")
+	fmt.Println("solution to challenge 2:", set1.XORHexStrings(chal2input1, chal2input2), "\n")
 
 	chal3sol, _ := set1.DecryptXOR("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736")
 	fmt.Println("solution to challenge 3:", chal3sol, "\n")
