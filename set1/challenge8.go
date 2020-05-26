@@ -10,10 +10,13 @@ func DetectAES(input string) string {
 			continue
 		}
 		lineBytes := HexStringToBytes(line)
-		chunk := lineBytes[:16]
-		for lineIdx := 1; lineIdx < (len(lineBytes) - 16); lineIdx++ {
-			if HammingDistance(lineBytes[lineIdx:lineIdx+16], chunk) == 0 {
-				return string(HexStringToBytes(line))
+		for xIdx := 16; xIdx < (len(lineBytes) - 16); xIdx += 16 {
+			thisChunk := lineBytes[xIdx : xIdx+16]
+			for yIdx := xIdx + 16; yIdx < (len(lineBytes) - 16); yIdx += 16 {
+				comparedChunk := lineBytes[yIdx : yIdx+16]
+				if HammingDistance(thisChunk, comparedChunk) == 0 {
+					return line
+				}
 			}
 		}
 	}
