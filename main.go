@@ -2,6 +2,7 @@ package main
 
 import (
 	"cryptopals/set1"
+	"cryptopals/set2"
 	"encoding/base64"
 	"fmt"
 	"io/ioutil"
@@ -34,4 +35,7 @@ func main() {
 
 	contents, _ := ioutil.ReadFile("8.txt")
 	fmt.Println("solution to challenge 8:\n", set1.DetectAES(string(contents)))
+
+	fmt.Println("\nSET 2\n-----")
+	fmt.Println("solution to challenge 1:", set2.PadPKCS([]byte("YELLOW SUBMARINE"), 20))
 }
