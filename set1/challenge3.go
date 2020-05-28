@@ -1,5 +1,7 @@
 package set1
 
+import "fmt"
+
 var English_Frequencies = map[byte]float32{
 	'a': 0.0651738, 'b': 0.0124248, 'c': 0.0217339, 'd': 0.0349835,
 	'e': 0.1041442, 'f': 0.0197881, 'g': 0.0158610, 'h': 0.0492888,
@@ -9,15 +11,20 @@ var English_Frequencies = map[byte]float32{
 	'u': 0.0225134, 'v': 0.0082903, 'w': 0.0171272, 'x': 0.0013692,
 	'y': 0.0145984, 'z': 0.0007836, ' ': 0.1918182}
 
-func DecryptXOR(input string) (string, byte) {
-	rawBytes := HexStringToBytes(input)
+func Challenge3() {
+	input := HexStringToBytes("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736")
+	solution, _ := DecryptXOR(input)
+	fmt.Println("SOLUTION 3:", string(solution), "\n")
+}
+
+func DecryptXOR(input []byte) ([]byte, byte) {
 	var cipherChar byte
 	var bestCipherChar byte
 	var highestScore float32 = -1.0
 	var bestCandidate []byte
 	for cipherChar = 0; cipherChar < 255; cipherChar++ {
-		decoded := make([]byte, len(rawBytes))
-		for idx, char := range rawBytes {
+		decoded := make([]byte, len(input))
+		for idx, char := range input {
 			decoded[idx] = char ^ cipherChar
 		}
 		cipherScore := FrequencyScore(decoded)
@@ -27,7 +34,7 @@ func DecryptXOR(input string) (string, byte) {
 			bestCipherChar = cipherChar
 		}
 	}
-	return string(bestCandidate), bestCipherChar
+	return bestCandidate, bestCipherChar
 }
 
 func FrequencyScore(candidate []byte) float32 {

@@ -6,20 +6,23 @@ import (
 	"strings"
 )
 
-func FindDecrypted(filename string) string {
-	contents, err := ioutil.ReadFile(filename)
+func Challenge4() {
+	contents, err := ioutil.ReadFile("4.txt")
 	if err != nil {
-		fmt.Println("Cannot open file", filename)
+		fmt.Println("Cannot open file", "4.txt")
 	}
-	lines := string(contents)
+	fmt.Println("SOLUTION 4:", FindDecrypted(string(contents)))
+}
+
+func FindDecrypted(lines string) string {
 	var bestCandidate string
 	var bestScore float32 = -1.0
 	for _, line := range strings.Split(lines, "\n") {
-		decrypted, _ := DecryptXOR(line)
-		score := FrequencyScore([]byte(decrypted))
+		decrypted, _ := DecryptXOR(HexStringToBytes(line))
+		score := FrequencyScore(decrypted)
 		if score > bestScore {
 			bestScore = score
-			bestCandidate = decrypted
+			bestCandidate = string(decrypted)
 		}
 	}
 	return bestCandidate

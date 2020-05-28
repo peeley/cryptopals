@@ -4,7 +4,19 @@ import (
 	"cryptopals/set1"
 	"fmt"
 	"math/rand"
+	"time"
 )
+
+func Challenge11() {
+	rand.Seed(time.Now().UnixNano())
+	input := []byte("YELLOW SUBMARINEYELLOW SUBMARINEYELLOW SUBMARINE")
+	mode, encrypted := EncryptWithRandomMode(input)
+	detectedMode := DetectAESMode(encrypted)
+	fmt.Printf("SOLUTION 11: detected %v mode, encrypted with %v mode \n", detectedMode, mode)
+	if mode != detectedMode {
+		panic("Unable to correctly guess AES mode.")
+	}
+}
 
 func RandomBytes(length int) []byte {
 	bytes := make([]byte, length)
@@ -14,7 +26,7 @@ func RandomBytes(length int) []byte {
 	return bytes
 }
 
-func EncryptWithRandomMode(input []byte) string {
+func EncryptWithRandomMode(input []byte) (string, []byte) {
 	key := RandomBytes(16)
 	prependBytes := RandomBytes(rand.Intn(6) + 5)
 	appendBytes := RandomBytes(rand.Intn(6) + 5)
@@ -22,21 +34,23 @@ func EncryptWithRandomMode(input []byte) string {
 	plainText = append(input, appendBytes...)
 	padLen := 16 - (len(plainText) % 16) + len(plainText)
 	plainText = []byte(PadPKCS(plainText, padLen))
-	var encrypted string
+	var encrypted []byte
+	var mode string
 	if rand.Intn(2) == 1 {
-		fmt.Println("encrypting with ECB mode")
-		encrypted = set1.EncryptAES(plainText, key)
+		mode = "ECB"
+		encrypted = set1.EncryptECB(plainText, key)
 	} else {
-		fmt.Println("encrypting with CBC mode")
+		mode = "CBC"
 		iv := RandomBytes(16)
 		encrypted = EncryptCBC(plainText, key, iv)
 	}
-	return encrypted
+	return mode, encrypted
 }
 
 func DetectAESMode(input []byte) string {
 	hexStringInput := set1.BytesToHexString(input)
-	if set1.DetectAES(hexStringInput) != "" {
+	isECB, _ := set1.DetectECB(hexStringInput)
+	if isECB {
 		return "ECB"
 	}
 	return "CBC"

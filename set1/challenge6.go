@@ -12,7 +12,8 @@ const (
 	keySizeUpperBound = 40
 )
 
-func DecryptRotatingXOR(filename string) string {
+func Challenge6() {
+	filename := "6.txt"
 	base64Bytes, err := ioutil.ReadFile(filename)
 	if err != nil {
 		fmt.Println("Cannot open file", filename)
@@ -22,19 +23,24 @@ func DecryptRotatingXOR(filename string) string {
 	if err != nil {
 		fmt.Println("Error decoding base 64", err)
 	}
-	keySize := findKeySize(inputBytes)
-	blocks := splitIntoBlocks(keySize, inputBytes)
-	var cipher []byte
-	for _, block := range blocks {
-		_, cipherChar := DecryptXOR(BytesToHexString(block))
-		cipher = append(cipher, cipherChar)
-	}
-	fmt.Printf("found key: %v \n", string(cipher))
-	fmt.Println("----------------")
-	return string(HexStringToBytes(EncryptRotatingXOR(string(inputBytes), string(cipher))))
+	fmt.Println("SOLUTION 6:")
+	solution := DecryptRotatingXOR(inputBytes)
+	fmt.Printf("decrypted: %v... \n\n", string(solution[:80]))
 }
 
-func HammingDistance(input1 []byte, input2 []byte) float64 {
+func DecryptRotatingXOR(input []byte) []byte {
+	keySize := findKeySize(input)
+	blocks := splitIntoBlocks(keySize, input)
+	var cipher []byte
+	for _, block := range blocks {
+		_, cipherChar := DecryptXOR(block)
+		cipher = append(cipher, cipherChar)
+	}
+	fmt.Printf("cracked key: %v \n", string(cipher))
+	return EncryptRotatingXOR(input, cipher)
+}
+
+func HammingDistance(input1, input2 []byte) float64 {
 	distance := 0.0
 	for byteIdx, _ := range input1 {
 		byte1 := input1[byteIdx]
