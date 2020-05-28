@@ -4,11 +4,9 @@ import (
 	"cryptopals/set1"
 	"fmt"
 	"math/rand"
-	"time"
 )
 
 func RandomBytes(length int) []byte {
-	rand.Seed(time.Now().UnixNano())
 	bytes := make([]byte, length)
 	for idx, _ := range bytes {
 		bytes[idx] = byte(rand.Intn(256))
@@ -17,7 +15,6 @@ func RandomBytes(length int) []byte {
 }
 
 func EncryptWithRandomMode(input []byte) string {
-	rand.Seed(time.Now().UnixNano())
 	key := RandomBytes(16)
 	prependBytes := RandomBytes(rand.Intn(6) + 5)
 	appendBytes := RandomBytes(rand.Intn(6) + 5)

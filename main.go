@@ -6,6 +6,8 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
+	//"time"
 )
 
 func main() {
@@ -50,9 +52,12 @@ func main() {
 	for idx, _ := range initVector {
 		initVector[idx] = '0'
 	}
-	fmt.Println("solution to challenge 10:", set2.DecryptCBC(challenge10, challenge10Key, initVector))
+	fmt.Println("solution to challenge 10:", set2.DecryptCBC(challenge10, challenge10Key, initVector), "\n")
+
+	rand.Seed(42)
 
 	chal11Input := []byte("YELLOW SUBMARINEYELLOW SUBMARINEYELLOW SUBMARINE")
+	fmt.Println("solution to challenge 11: ")
 	encryptedChal11 := []byte(set2.EncryptWithRandomMode(chal11Input))
-	fmt.Println("solution to challenge 11: detecting", set2.DetectAESMode(encryptedChal11))
+	fmt.Printf("detected %v mode \n", set2.DetectAESMode(encryptedChal11))
 }
