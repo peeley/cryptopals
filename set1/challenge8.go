@@ -20,5 +20,5 @@ func DetectAES(input string) string {
 			}
 		}
 	}
-	return "no aes detected"
+	return ""
 }

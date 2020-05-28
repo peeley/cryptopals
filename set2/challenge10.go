@@ -15,3 +15,17 @@ func DecryptCBC(input []byte, key []byte, iv []byte) string {
 	}
 	return string(decrypted)
 }
+
+func EncryptCBC(input []byte, key []byte, iv []byte) string {
+	chunkSize := len(key)
+	lastChunk := iv
+	var encrypted []byte
+	for idx := 0; idx < len(input)-chunkSize; idx += chunkSize {
+		thisChunk := input[idx : idx+16]
+		xordChunk := set1.XORBytes(thisChunk, lastChunk)
+		encryptedChunk := []byte(set1.EncryptAES(xordChunk, key))
+		encrypted = append(encrypted, encryptedChunk...)
+		lastChunk = thisChunk
+	}
+	return string(encrypted)
+}

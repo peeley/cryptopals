@@ -51,4 +51,8 @@ func main() {
 		initVector[idx] = '0'
 	}
 	fmt.Println("solution to challenge 10:", set2.DecryptCBC(challenge10, challenge10Key, initVector))
+
+	chal11Input := []byte("YELLOW SUBMARINEYELLOW SUBMARINEYELLOW SUBMARINE")
+	encryptedChal11 := []byte(set2.EncryptWithRandomMode(chal11Input))
+	fmt.Println("solution to challenge 11: detecting", set2.DetectAESMode(encryptedChal11))
 }
