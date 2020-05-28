@@ -31,11 +31,24 @@ func main() {
 	challenge7, _ = base64.StdEncoding.DecodeString(string(challenge7))
 	challenge7 = []byte(challenge7)
 	key7 := []byte("YELLOW SUBMARINE")
-	fmt.Println("solution to challenge 7:\n", set1.DecryptAES(challenge7, key7))
+	chal7Decrypted := set1.DecryptAES(challenge7, key7)
+	fmt.Println("solution to challenge 7:\n", chal7Decrypted)
+	if set1.EncryptAES([]byte(chal7Decrypted), key7) != string(challenge7) {
+		panic("Encrypt/Decrypt AES not symmetrical")
+	}
 
 	contents, _ := ioutil.ReadFile("8.txt")
 	fmt.Println("solution to challenge 8:\n", set1.DetectAES(string(contents)))
 
 	fmt.Println("\nSET 2\n-----")
-	fmt.Println("solution to challenge 1:", set2.PadPKCS([]byte("YELLOW SUBMARINE"), 20))
+	fmt.Println("solution to challenge 9:", set2.PadPKCS([]byte("YELLOW SUBMARINE"), 20))
+
+	challenge10, _ := ioutil.ReadFile("10.txt")
+	challenge10, _ = base64.StdEncoding.DecodeString(string(challenge10))
+	challenge10Key := []byte("YELLOW SUBMARINE")
+	initVector := make([]byte, len(challenge10Key))
+	for idx, _ := range initVector {
+		initVector[idx] = '0'
+	}
+	fmt.Println("solution to challenge 10:", set2.DecryptCBC(challenge10, challenge10Key, initVector))
 }
