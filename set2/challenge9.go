@@ -1,6 +1,9 @@
 package set2
 
-import "fmt"
+import (
+	"cryptopals/set1"
+	"fmt"
+)
 
 func Challenge9() {
 	input := []byte("YELLOW SUBMARINE")
@@ -17,4 +20,13 @@ func PadPKCS(input []byte, length int) []byte {
 		output = append(output, diff)
 	}
 	return output
+}
+
+func GetPaddedLength(buffer []byte) int {
+	return 16 - (len(buffer) % 16) + len(buffer)
+}
+
+func PadAndEncryptECB(input, key []byte) []byte {
+	padded := PadPKCS(input, GetPaddedLength(input))
+	return set1.EncryptECB(padded, key)
 }
