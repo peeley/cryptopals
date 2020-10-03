@@ -12,11 +12,11 @@ func Challenge10() {
 	input, _ = base64.StdEncoding.DecodeString(string(input))
 	key := []byte("YELLOW SUBMARINE")
 	initVector := make([]byte, len(key))
-	for idx, _ := range initVector {
+	for idx := range initVector {
 		initVector[idx] = '0'
 	}
 	solution := DecryptCBC(input, key, initVector)
-	fmt.Println("SOLUTION 10:", string(solution[:80]), "\n")
+	fmt.Println("\nSOLUTION 10:", string(solution[:80]))
 }
 
 func DecryptCBC(input, key, iv []byte) []byte {

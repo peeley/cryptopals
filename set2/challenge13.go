@@ -1,15 +1,14 @@
 package set2
 
 import (
-	//	"cryptopals/set1"
+	"cryptopals/set1"
 	"fmt"
+	"math/rand"
 	"strings"
 )
 
 func Challenge13() {
-	profile := []byte(ProfileFor("master@me.com"))
-	key := []byte("YELLOW SUBMARINE")
-	fmt.Println("SOLUTION 13:")
+	fmt.Println("SOLUTION 13:", string(CutAndPaste()))
 }
 
 func ParseCookie(input string) map[string]string {
@@ -22,13 +21,38 @@ func ParseCookie(input string) map[string]string {
 	return parsed
 }
 
-func ProfileFor(email string) string {
+func EncryptCookie(cookie, key []byte) []byte {
+	input := PadPKCS(cookie, GetPaddedLength(cookie))
+	return set1.EncryptECB(input, key)
+}
+
+func DecryptCookie(encrypted, key []byte) []byte {
+	return set1.DecryptECB(encrypted, key)
+}
+
+func CookieFor(email string) string {
 	email = strings.ReplaceAll(email, "&", "")
 	email = strings.ReplaceAll(email, "=", "")
+	email = "email=" + email
 	cookie := string(append([]byte(email), []byte("&uid=10&role=user")...))
 	return cookie
 }
 
-func CutAndPaste(cookie1, cookie2 []byte) []byte {
-	return []byte{}
+func CutAndPaste() []byte {
+	rand.Seed(69)
+	aesKey := RandomBytes(16)
+	blockCookie := []byte(CookieFor("aaaaaaaa@a.co")) // blocks end right at `role=`
+	blockCipher := CookieOracle(blockCookie, aesKey)
+	upToRoleEncrypted := blockCipher[:len(blockCipher)-4]
+	adminCookie := []byte(CookieFor("admin@a.co")) // will give us ciphered `admin`
+	adminCipher := CookieOracle(adminCookie, aesKey)
+	adminRoleEncrypted := adminCipher[:6]
+	fullEncryptedCookie := append(upToRoleEncrypted, adminRoleEncrypted...)
+	fullEncryptedCookie = PadPKCS(fullEncryptedCookie, 48)
+	return DecryptCookie(fullEncryptedCookie, aesKey)
+}
+
+func CookieOracle(inputCookie, aesKey []byte) []byte {
+	encryptedCookie := PadAndEncryptECB(inputCookie, aesKey)
+	return encryptedCookie
 }

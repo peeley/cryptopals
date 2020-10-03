@@ -20,7 +20,7 @@ func Challenge11() {
 
 func RandomBytes(length int) []byte {
 	bytes := make([]byte, length)
-	for idx, _ := range bytes {
+	for idx := range bytes {
 		bytes[idx] = byte(rand.Intn(256))
 	}
 	return bytes

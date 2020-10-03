@@ -9,7 +9,6 @@ func Challenge9() {
 	input := []byte("YELLOW SUBMARINE")
 	length := 20
 	fmt.Println("SOLUTION 9:", string(PadPKCS(input, length)))
-	fmt.Println()
 }
 
 func PadPKCS(input []byte, length int) []byte {
