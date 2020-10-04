@@ -3,11 +3,13 @@ package set2
 import (
 	"cryptopals/set1"
 	"fmt"
-	"math/rand"
 	"strings"
 )
 
+var aesKey = RandomBytes(16)
+
 func Challenge13() {
+	fmt.Println()
 	fmt.Println("SOLUTION 13:", string(CutAndPaste()))
 }
 
@@ -21,13 +23,13 @@ func ParseCookie(input string) map[string]string {
 	return parsed
 }
 
-func EncryptCookie(cookie, key []byte) []byte {
-	input := PadPKCS(cookie, GetPaddedLength(cookie))
-	return set1.EncryptECB(input, key)
+func EncryptCookieFor(email string) []byte {
+	cookie := []byte(CookieFor(email))
+	return PadAndEncryptECB(cookie, aesKey)
 }
 
-func DecryptCookie(encrypted, key []byte) []byte {
-	return set1.DecryptECB(encrypted, key)
+func DecryptCookie(encrypted []byte) []byte {
+	return set1.DecryptECB(encrypted, aesKey)
 }
 
 func CookieFor(email string) string {
@@ -39,20 +41,17 @@ func CookieFor(email string) string {
 }
 
 func CutAndPaste() []byte {
-	rand.Seed(69)
-	aesKey := RandomBytes(16)
-	blockCookie := []byte(CookieFor("aaaaaaaa@a.co")) // blocks end right at `role=`
-	blockCipher := CookieOracle(blockCookie, aesKey)
-	upToRoleEncrypted := blockCipher[:len(blockCipher)-4]
-	adminCookie := []byte(CookieFor("admin@a.co")) // will give us ciphered `admin`
-	adminCipher := CookieOracle(adminCookie, aesKey)
-	adminRoleEncrypted := adminCipher[:6]
-	fullEncryptedCookie := append(upToRoleEncrypted, adminRoleEncrypted...)
-	fullEncryptedCookie = PadPKCS(fullEncryptedCookie, 48)
-	return DecryptCookie(fullEncryptedCookie, aesKey)
-}
 
-func CookieOracle(inputCookie, aesKey []byte) []byte {
-	encryptedCookie := PadAndEncryptECB(inputCookie, aesKey)
-	return encryptedCookie
+	upToRoleCipher := EncryptCookieFor("xxxxxxxx@a.co")
+	upToRoleEncrypted := upToRoleCipher[:32] // text ends after role=
+
+	adminCipher := EncryptCookieFor("xxxxxxxxxxadmin@a.co")
+	adminRoleEncrypted := adminCipher[16:32] // encrypted text for "admin"
+	// for idx := 6; idx < 16; idx++ {
+	// 	adminRoleEncrypted[idx] = 0
+	// }
+
+	fullEncryptedCookie := append(upToRoleEncrypted, adminRoleEncrypted...)
+
+	return DecryptCookie(fullEncryptedCookie)
 }
