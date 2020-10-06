@@ -14,7 +14,7 @@ var English_Frequencies = map[byte]float32{
 func Challenge3() {
 	input := HexStringToBytes("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736")
 	solution, _ := DecryptXOR(input)
-	fmt.Println("SOLUTION 3:", string(solution), "\n")
+	fmt.Println("\nSOLUTION 3:", string(solution))
 }
 
 func DecryptXOR(input []byte) ([]byte, byte) {

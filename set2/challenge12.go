@@ -9,7 +9,7 @@ import (
 )
 
 func Challenge12() {
-	fmt.Println("SOLUTION 12:")
+	fmt.Println("\nSOLUTION 12:")
 	blockSize := FindBlockSize()
 	fmt.Println("  detecting a block size of ", blockSize)
 	revealed := ByteAtATimeDecrypt(blockSize)

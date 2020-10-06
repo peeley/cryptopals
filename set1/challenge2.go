@@ -8,7 +8,7 @@ import (
 func Challenge2() {
 	input1 := "1c0111001f010100061a024b53535009181c"
 	input2 := "686974207468652062756c6c277320657965"
-	fmt.Println("SOLUTION 2:", XORHexStrings(input1, input2), "\n")
+	fmt.Println("\nSOLUTION 2:", XORHexStrings(input1, input2))
 }
 
 func XORHexStrings(input1 string, input2 string) string {
@@ -19,7 +19,7 @@ func XORHexStrings(input1 string, input2 string) string {
 
 func XORBytes(input1, input2 []byte) []byte {
 	xorBytes := make([]byte, len(input2))
-	for idx, _ := range input1 {
+	for idx := range input1 {
 		xorBytes[idx] = input1[idx] ^ input2[idx]
 	}
 	return xorBytes

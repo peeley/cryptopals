@@ -12,7 +12,7 @@ func Challenge11() {
 	input := []byte("YELLOW SUBMARINEYELLOW SUBMARINEYELLOW SUBMARINE")
 	mode, encrypted := EncryptWithRandomMode(input)
 	detectedMode := DetectAESMode(encrypted)
-	fmt.Printf("SOLUTION 11: detected %v mode, encrypted with %v mode \n", detectedMode, mode)
+	fmt.Printf("\nSOLUTION 11: detected %v mode, encrypted with %v mode \n", detectedMode, mode)
 	if mode != detectedMode {
 		panic("Unable to correctly guess AES mode.")
 	}

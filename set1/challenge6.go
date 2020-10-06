@@ -23,7 +23,7 @@ func Challenge6() {
 	if err != nil {
 		fmt.Println("Error decoding base 64", err)
 	}
-	fmt.Println("SOLUTION 6:")
+	fmt.Println("\nSOLUTION 6:")
 	solution := DecryptRotatingXOR(inputBytes)
 	fmt.Printf("decrypted: %v... \n\n", string(solution[:80]))
 }
@@ -42,7 +42,7 @@ func DecryptRotatingXOR(input []byte) []byte {
 
 func HammingDistance(input1, input2 []byte) float64 {
 	distance := 0.0
-	for byteIdx, _ := range input1 {
+	for byteIdx := range input1 {
 		byte1 := input1[byteIdx]
 		byte2 := input2[byteIdx]
 		for bitIdx := 0; bitIdx < 8; bitIdx++ {

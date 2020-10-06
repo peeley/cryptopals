@@ -11,7 +11,7 @@ func Challenge4() {
 	if err != nil {
 		fmt.Println("Cannot open file", "4.txt")
 	}
-	fmt.Println("SOLUTION 4:", FindDecrypted(string(contents)))
+	fmt.Println("\nSOLUTION 4:", FindDecrypted(string(contents)))
 }
 
 func FindDecrypted(lines string) string {

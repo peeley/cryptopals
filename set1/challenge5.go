@@ -6,7 +6,7 @@ func Challenge5() {
 	poetry := []byte("Burning 'em, if you ain't quick and nimble")
 	key := []byte("ICE")
 	encrypted := EncryptRotatingXOR(poetry, key)
-	fmt.Println("SOLUTION 5:", BytesToHexString(encrypted), "\n")
+	fmt.Println("\nSOLUTION 5:", BytesToHexString(encrypted))
 }
 
 func EncryptRotatingXOR(input, key []byte) []byte {
