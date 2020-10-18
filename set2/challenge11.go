@@ -4,11 +4,9 @@ import (
 	"cryptopals/set1"
 	"fmt"
 	"math/rand"
-	"time"
 )
 
 func Challenge11() {
-	rand.Seed(time.Now().UnixNano())
 	input := []byte("YELLOW SUBMARINEYELLOW SUBMARINEYELLOW SUBMARINE")
 	mode, encrypted := EncryptWithRandomMode(input)
 	detectedMode := DetectAESMode(encrypted)

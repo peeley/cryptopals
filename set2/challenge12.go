@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
-	"math/rand"
-	"time"
 )
 
 func Challenge12() {
@@ -30,9 +28,7 @@ func FindBlockSize() int {
 }
 
 func EncryptionOracle(userInput []byte) []byte {
-	rand.Seed(69) // create consistent but unknown key
 	key := RandomBytes(16)
-	rand.Seed(time.Now().UnixNano()) // reset for future keys to be random
 	unknown, _ := base64.StdEncoding.DecodeString("Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkgaGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBqdXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUgYnkK")
 	combined := append(userInput, unknown...)
 	return PadAndEncryptECB(combined, key)

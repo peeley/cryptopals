@@ -4,9 +4,12 @@ import (
 	"cryptopals/set1"
 	"cryptopals/set2"
 	"fmt"
+	"math/rand"
+	"time"
 )
 
 func main() {
+	rand.Seed(time.Now().UnixNano())
 	set1.Challenge1()
 	set1.Challenge2()
 	set1.Challenge3()
