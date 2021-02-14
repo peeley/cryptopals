@@ -6,6 +6,8 @@ import (
 	"fmt"
 )
 
+var oracleKey = RandomBytes(16)
+
 func Challenge12() {
 	fmt.Println("\nSOLUTION 12:")
 	blockSize := FindBlockSize()
@@ -28,27 +30,32 @@ func FindBlockSize() int {
 }
 
 func EncryptionOracle(userInput []byte) []byte {
-	key := RandomBytes(16)
 	unknown, _ := base64.StdEncoding.DecodeString("Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkgaGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBqdXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUgYnkK")
 	combined := append(userInput, unknown...)
-	return PadAndEncryptECB(combined, key)
+	return PadAndEncryptECB(combined, oracleKey)
 }
 
 func ByteAtATimeDecrypt(blockSize int) []byte {
 	oracleLength := len(EncryptionOracle([]byte{}))
 	var cracked []byte
-	for length := 0; length < oracleLength; length++ {
+
+	for length := 1; length < oracleLength; length++ {
 		prefixLength := (blockSize - (len(cracked) % blockSize)) - 1
 		prefix := make([]byte, prefixLength)
+
 		for prefixIdx := range prefix {
 			prefix[prefixIdx] = 'A'
 		}
-		shortOutput := EncryptionOracle(prefix)
+
+		realOutput := EncryptionOracle(prefix)
 		testBlock := append(prefix, cracked...)
+
 		for possibleByte := byte(0); possibleByte < 255; possibleByte++ {
 			block := append(testBlock, possibleByte)
-			oracleOut := EncryptionOracle(block)
-			if bytes.Equal(oracleOut[:prefixLength+len(cracked)+1], shortOutput[:prefixLength+len(cracked)+1]) {
+			possibleOut := EncryptionOracle(block)
+
+			if bytes.Equal(possibleOut[:len(block)],
+							realOutput[:len(block)]) {
 				cracked = append(cracked, possibleByte)
 				break
 			}

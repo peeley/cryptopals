@@ -42,11 +42,11 @@ func CookieFor(email string) string {
 
 func CutAndPaste() []byte {
 
-	upToRoleCipher := EncryptCookieFor("xxxxxxxx@a.co")
+	upToRoleCipher := EncryptCookieFor("12345678@a.co")
 	upToRoleEncrypted := upToRoleCipher[:32] // text ends after role=
 
 	paddedAdmin := PadPKCS([]byte("admin"), 16)
-	adminEmail := "xxxxxxxxxx" + string(paddedAdmin) + "@a.co"
+	adminEmail := "1234567890" + string(paddedAdmin) + "@a.co"
 	adminCipher := EncryptCookieFor(adminEmail)
 	adminRoleEncrypted := adminCipher[16:32] // encrypted text for "admin"
 	// for idx := 6; idx < 16; idx++ {

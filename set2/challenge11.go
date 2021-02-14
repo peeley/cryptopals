@@ -4,6 +4,7 @@ import (
 	"cryptopals/set1"
 	"fmt"
 	"math/rand"
+	"time"
 )
 
 func Challenge11() {
@@ -17,6 +18,7 @@ func Challenge11() {
 }
 
 func RandomBytes(length int) []byte {
+	rand.Seed(time.Now().UnixNano())
 	bytes := make([]byte, length)
 	for idx := range bytes {
 		bytes[idx] = byte(rand.Intn(256))
