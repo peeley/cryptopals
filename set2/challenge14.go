@@ -12,16 +12,14 @@ func Challenge14(){
 	fmt.Println("\nSOLUTION 14:")
 
 	fmt.Printf("random prefix: %v, len: %v\n",
-		string(randomPrefix),
+		randomPrefix,
 		len(randomPrefix))
 	blockSize := FindBlockSize2()
-	prefixLength := FindRandomPrefixLength(blockSize)
+	paddingStart, endBlockSize := FindRandomPrefixLength(blockSize)
+	fmt.Printf("padding starts at %v, third block of %v long pulls in one secret char\n", paddingStart, endBlockSize)
 
-	fmt.Println("blockSize:", blockSize)
-	fmt.Println("cracked prefix length: ", prefixLength)
-
-	cracked := ByteAtATimeDecrypt2(blockSize, prefixLength)
-	fmt.Println("cracked", string(cracked))
+	cracked := ByteAtATimeDecrypt2(blockSize, paddingStart, endBlockSize)
+	fmt.Println("cracked: ", string(cracked))
 
 	fmt.Println()
 }
@@ -44,34 +42,56 @@ func FindBlockSize2() int {
 	}
 }
 
-func FindRandomPrefixLength(blockSize int) int {
-	dummyInput := make([]byte, blockSize * 3, 'A')
+func FindRandomPrefixLength(blockSize int) (int, int) {
+	dummyInput := make([]byte, (blockSize * 3))
 	oracled := EncryptionOracle2(dummyInput)
-	for i := 0; i < len(oracled); i++ {
+	var paddingStart int
+	var paddingEnd int
+	for i := 0; i < len(oracled) - (blockSize * 2); i++ {
 		firstBlock := oracled[i:i+blockSize]
 		secondBlock := oracled[i+blockSize:i+(blockSize*2)]
 		if bytes.Equal(firstBlock, secondBlock) {
-			return i
+			paddingStart = i
+			paddingEnd = i+(blockSize*2)
 		}
 	}
-	return -1
+
+	if paddingStart == 0 && paddingEnd == 0 {
+		return -1, -1
+	}
+
+	for i := blockSize; i > 0; i-- {
+		testInput := make([]byte, (blockSize * 2) + i)
+		testOracle := EncryptionOracle2(testInput)
+		if !bytes.Equal(testOracle[paddingStart:paddingEnd], oracled[paddingStart:paddingEnd]) {
+			fmt.Println(testOracle[paddingStart:paddingStart+blockSize],
+				testOracle[paddingStart+blockSize:paddingStart+(blockSize*2)])
+			fmt.Println(oracled[paddingStart:paddingStart+blockSize],
+				oracled[paddingStart+blockSize:paddingStart+(blockSize*2)])
+			return paddingStart, i
+		}
+	}
+	return -1, -1
 }
 
-func ByteAtATimeDecrypt2(blockSize, prefixLength int) []byte {
-	oracleLength := len(input)
+func ByteAtATimeDecrypt2(blockSize, paddingStart, endBlockSize int) []byte {
 	var cracked []byte
+	oracleLength := len(EncryptionOracle2([]byte{}))
 	for length := 0; length < oracleLength; length++ {
-		prefixLength := (blockSize - (len(cracked) % blockSize)) - 1
-		prefix := make([]byte, prefixLength)
-		for prefixIdx := range prefix {
-			prefix[prefixIdx] = 'A'
-		}
-		shortOutput := EncryptionOracle2(prefix)
-		testBlock := append(prefix, cracked...)
+
+		oneShortPrefix := make([]byte, blockSize*10 - len(cracked) + endBlockSize)
+
+		shortOutput := EncryptionOracle2(oneShortPrefix)
+		testBlock := append(oneShortPrefix, cracked...)
+		fmt.Println(testBlock)
+
 		for possibleByte := byte(0); possibleByte < 255; possibleByte++ {
 			block := append(testBlock, possibleByte)
-			oracleOut := EncryptionOracle2(block)
-			if bytes.Equal(oracleOut[:prefixLength+len(cracked)+1], shortOutput[:prefixLength+len(cracked)+1]) {
+			possibleOutput := EncryptionOracle2(block)
+
+			if bytes.Equal(possibleOutput[:len(block)],
+							shortOutput[:len(block)]) {
+
 				cracked = append(cracked, possibleByte)
 				break
 			}

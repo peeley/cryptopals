@@ -43,10 +43,6 @@ func ByteAtATimeDecrypt(blockSize int) []byte {
 		prefixLength := (blockSize - (len(cracked) % blockSize)) - 1
 		prefix := make([]byte, prefixLength)
 
-		for prefixIdx := range prefix {
-			prefix[prefixIdx] = 'A'
-		}
-
 		realOutput := EncryptionOracle(prefix)
 		testBlock := append(prefix, cracked...)
 
