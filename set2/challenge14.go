@@ -6,14 +6,11 @@ import (
 	"bytes"
 )
 
-var randomPrefix []byte = RandomBytes(rand.Intn(48))
+var randomPrefix []byte = RandomBytes(rand.Intn(16))
 
 func Challenge14(){
 	fmt.Println("\nSOLUTION 14:")
 
-	fmt.Printf("random prefix: %v, len: %v\n",
-		randomPrefix,
-		len(randomPrefix))
 	blockSize := FindBlockSize2()
 	paddingStart, endBlockSize := FindRandomPrefixLength(blockSize)
 	fmt.Printf("padding starts at %v, third block of %v long pulls in one secret char\n", paddingStart, endBlockSize)
@@ -56,18 +53,10 @@ func FindRandomPrefixLength(blockSize int) (int, int) {
 		}
 	}
 
-	if paddingStart == 0 && paddingEnd == 0 {
-		return -1, -1
-	}
-
 	for i := blockSize; i > 0; i-- {
 		testInput := make([]byte, (blockSize * 2) + i)
 		testOracle := EncryptionOracle2(testInput)
 		if !bytes.Equal(testOracle[paddingStart:paddingEnd], oracled[paddingStart:paddingEnd]) {
-			fmt.Println(testOracle[paddingStart:paddingStart+blockSize],
-				testOracle[paddingStart+blockSize:paddingStart+(blockSize*2)])
-			fmt.Println(oracled[paddingStart:paddingStart+blockSize],
-				oracled[paddingStart+blockSize:paddingStart+(blockSize*2)])
 			return paddingStart, i
 		}
 	}
@@ -83,7 +72,6 @@ func ByteAtATimeDecrypt2(blockSize, paddingStart, endBlockSize int) []byte {
 
 		shortOutput := EncryptionOracle2(oneShortPrefix)
 		testBlock := append(oneShortPrefix, cracked...)
-		fmt.Println(testBlock)
 
 		for possibleByte := byte(0); possibleByte < 255; possibleByte++ {
 			block := append(testBlock, possibleByte)
