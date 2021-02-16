@@ -20,11 +20,17 @@ func Challenge10() {
 }
 
 func DecryptCBC(input, key, iv []byte) []byte {
+
+	if len(iv) != len(key) {
+		fmt.Println("Initialization vector not same length as key")
+		return []byte{}
+	}
+
 	chunkSize := len(key)
 	lastChunk := iv
 	var decrypted []byte
-	for idx := 0; idx < len(input)-chunkSize; idx += chunkSize {
-		thisChunk := input[idx : idx+16]
+	for idx := 0; idx < len(input); idx += chunkSize {
+		thisChunk := input[idx : idx+chunkSize]
 		decryptedChunk := set1.DecryptECB(thisChunk, key)
 		xordChunk := set1.XORBytes(decryptedChunk, lastChunk)
 		decrypted = append(decrypted, xordChunk...)
@@ -34,15 +40,21 @@ func DecryptCBC(input, key, iv []byte) []byte {
 }
 
 func EncryptCBC(input, key, iv []byte) []byte {
+
+	if len(iv) != len(key) {
+		fmt.Println("Initialization vector not same length as key")
+		return []byte{}
+	}
+
 	chunkSize := len(key)
 	lastChunk := iv
 	var encrypted []byte
-	for idx := 0; idx < len(input)-chunkSize; idx += chunkSize {
-		thisChunk := input[idx : idx+16]
+	for idx := 0; idx < len(input); idx += chunkSize {
+		thisChunk := input[idx : idx+chunkSize]
 		xordChunk := set1.XORBytes(thisChunk, lastChunk)
 		encryptedChunk := set1.EncryptECB(xordChunk, key)
 		encrypted = append(encrypted, encryptedChunk...)
-		lastChunk = thisChunk
+		lastChunk = encryptedChunk
 	}
 	return encrypted
 }
