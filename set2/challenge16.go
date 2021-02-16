@@ -17,10 +17,9 @@ const (
 func Challenge16(){
 	fmt.Println("\nSOLUTION 16:")
 
-	input := []byte("asdf;admin=true")
-	encrypted := padAndEncrypt(input)
-	isAdmin := decryptAndSearchForAdmin(encrypted)
-	fmt.Println("user is admin: ", isAdmin)
+	fmt.Println("bitflipped CBC encryption input:")
+	bitflipAttack()
+
 	fmt.Println()
 }
 
@@ -38,11 +37,11 @@ func padAndEncrypt(input []byte) []byte {
 	preparedInputBytes := []byte(preparedInput)
 	paddedLength := GetPaddedLength(preparedInputBytes)
 	padded := PadPKCS(preparedInputBytes, paddedLength)
-	return EncryptCBC(padded, Key, []byte(Iv))
+	return EncryptCBC(padded, Key, Iv)
 }
 
 func decryptAndSearchForAdmin(encrypted []byte) bool {
-	decrypted := DecryptCBC(encrypted, Key, []byte(Iv))
+	decrypted := DecryptCBC(encrypted, Key, Iv)
 	matches, err := regexp.Match(";admin=true;", decrypted)
 
 	if err != nil {
@@ -51,4 +50,30 @@ func decryptAndSearchForAdmin(encrypted []byte) bool {
 	}
 
 	return matches
+}
+
+func bitflipAttack() {
+	input := make([]byte, len(Key) * 2)
+	for i := range(input) {
+		input[i] = 0
+	}
+
+	startOfInjectedData := len(Prepend)
+	startOfCorruptedData := len(Prepend) + len(Key)
+	targetData := []byte(";admin=true;")
+	encrypted := padAndEncrypt(input)
+
+	for idx := 0; idx < len(targetData); idx++ {
+		for byteOffset := 0; byteOffset < 255; byteOffset ++ {
+			encrypted[idx + startOfInjectedData] = byte(byteOffset)
+			decrypted := DecryptCBC(encrypted, Key, Iv)
+			if decrypted[startOfCorruptedData + idx] == targetData[idx] {
+				break
+			}
+		}
+	}
+	isAdmin := decryptAndSearchForAdmin(encrypted)
+	if isAdmin {
+		fmt.Println(string(DecryptCBC(encrypted, Key, Iv)))
+	}
 }
