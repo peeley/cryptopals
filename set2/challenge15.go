@@ -8,15 +8,15 @@ func Challenge15(){
 	fmt.Println("\nSOLUTION 15:")
 
 	padded := PadPKCS([]byte("ICE ICE BABY"), 16)
-	validated := string(validatePKCS(padded))
+	validated := string(ValidatePKCS(padded))
 	invalid := []byte("ICE ICE BABY\x01\x02\x03\x04")
-	invalidated := string(validatePKCS(invalid))
+	invalidated := string(ValidatePKCS(invalid))
 	fmt.Println(validated)
 	fmt.Println(invalidated)
 	fmt.Println()
 }
 
-func validatePKCS(string []byte) []byte {
+func ValidatePKCS(string []byte) []byte {
 	if len(string) == 0 {
 		return []byte{}
 	}

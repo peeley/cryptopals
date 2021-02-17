@@ -3,6 +3,7 @@ package main
 import (
 	"cryptopals/set1"
 	"cryptopals/set2"
+	"cryptopals/set3"
 	"fmt"
 	"math/rand"
 	"time"
@@ -28,4 +29,7 @@ func main() {
 	set2.Challenge14()
 	set2.Challenge15()
 	set2.Challenge16()
+
+	fmt.Println("\nSET 3\n-----")
+	set3.Challenge17()
 }
