@@ -26,7 +26,7 @@ var RandomKey = set2.RandomBytes(16)
 func Challenge17(){
 	fmt.Println("\nSOLUTION 17:")
 
-	paddingAttack()
+	paddingAttackOnString()
 
 	fmt.Println()
 }
@@ -48,24 +48,46 @@ func decryptAndCheckPadding(encrypted []byte) bool {
 	return len(validated) != 0
 }
 
-func paddingAttack() {
-	encrypted := encryptRandomString()
+func paddingAttackOnBlock(encrypted []byte, startIdx, endIdx int) []byte {
 
-	testBlock := encrypted[len(encrypted)-(len(RandomKey)*2):len(encrypted)-len(RandomKey)]
-	intermediate := make([]byte, len(RandomKey))
-	decrypted := make([]byte, len(RandomKey))
+	testBlock := encrypted[startIdx:endIdx]
+	intermediateBlock := make([]byte, len(RandomKey))
+	decryptedBlock := make([]byte, len(RandomKey))
 
-	for blockIdx := len(RandomKey)-1; blockIdx > 0; blockIdx-- {
-		// TODO iterate backwards to set previously cracked pad bytes
+	originalBlock := make([]byte, len(RandomKey))
+	copy(testBlock, originalBlock)
+
+	for blockIdx := len(RandomKey)-1; blockIdx >= 0; blockIdx-- {
 		padValue := byte(len(RandomKey) - blockIdx)
+		for solvedIdx := len(RandomKey)-1; solvedIdx > blockIdx; solvedIdx-- {
+			testBlock[solvedIdx] = intermediateBlock[solvedIdx] ^ padValue
+		}
 		for byteValue := byte(0); byteValue < 255; byteValue++ {
 			testBlock[blockIdx] = byteValue
 			isValidPadding := decryptAndCheckPadding(encrypted)
 			if isValidPadding {
-				intermediate[blockIdx] = testBlock[blockIdx] ^ padValue
-				decrypted[blockIdx] = testBlock[blockIdx] ^ intermediate[blockIdx]
+				intermediateBlock[blockIdx] = testBlock[blockIdx] ^ padValue
+				decryptedBlock[blockIdx] = originalBlock[blockIdx] ^ intermediateBlock[blockIdx]
+				fmt.Printf("cracked byte at %v: %v\n", blockIdx, decryptedBlock[blockIdx])
 			}
 		}
 	}
-	fmt.Println(decrypted)
+	fmt.Printf("decrypted block from %v to %v: %v\n", startIdx, endIdx, string(decryptedBlock))
+	return decryptedBlock
+}
+
+func paddingAttackOnString() []byte {
+	encrypted := encryptRandomString()
+	var decrypted []byte
+
+	for blockIdx := len(encrypted) - len(RandomKey); blockIdx > 0; blockIdx -= len(RandomKey) {
+		decryptedBlock := paddingAttackOnBlock(
+			encrypted[0:blockIdx+len(RandomKey)],
+			blockIdx,
+			blockIdx+len(RandomKey))
+		decrypted = append(decryptedBlock, decrypted...)
+	}
+
+	fmt.Println("entire string:", string(decrypted))
+	return decrypted
 }
